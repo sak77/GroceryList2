@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:background="@drawable/product_item_bkg"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/txtName"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textAppearance="@style/ListItemTextStyle"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/txtQty"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textAppearance="@style/ListItemTextStyle"
+        android:text="Qty" />
+</LinearLayout>
