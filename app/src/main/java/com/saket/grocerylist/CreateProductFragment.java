@@ -17,6 +17,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.saket.grocerylist.data.Product;
 import com.saket.grocerylist.data.SingletonGroceryDBInstance;
 
+import javax.xml.validation.Validator;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,10 +33,6 @@ public class CreateProductFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -51,7 +49,7 @@ public class CreateProductFragment extends Fragment {
      * @return A new instance of fragment CreateProductFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CreateProductFragment newInstance(String param1, String param2) {
+    static CreateProductFragment newInstance(String param1, String param2) {
         CreateProductFragment fragment = new CreateProductFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -82,8 +80,9 @@ public class CreateProductFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            // TODO: Rename and change types of parameters
+            String param1 = getArguments().getString(ARG_PARAM1);
+            String param2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -111,6 +110,8 @@ public class CreateProductFragment extends Fragment {
         });
         Button btnCancel = root.findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(view -> {
+            //New way to assert not null....
+            assert getFragmentManager() != null;
             //Close fragment
             getFragmentManager().popBackStack();
         });

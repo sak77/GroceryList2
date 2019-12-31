@@ -19,7 +19,7 @@ import java.util.List;
 public class ItemsListAdapter extends RecyclerView.Adapter<ItemsListAdapter.ListItemViewHolder> {
 
 
-    List<ItemsList> mItemsLists;
+    private List<ItemsList> mItemsLists;
 
     public interface OnItemSelectedListener {
         void onItemSelected(ItemsList itemsList);

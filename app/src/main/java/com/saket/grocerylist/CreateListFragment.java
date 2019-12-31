@@ -1,6 +1,5 @@
 package com.saket.grocerylist;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +23,6 @@ import com.saket.grocerylist.data.SingletonGroceryDBInstance;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,21 +34,28 @@ public class CreateListFragment extends Fragment implements ProductsAdapter.onIt
 
     private static CreateListFragment sCreateListFragment;
 
+    private static final String NAME = "name";
+    private static final String PRODUCTS = "products";
+    private static final String ID = "id";
+
     List<Product> lstProducts = new ArrayList<>();
     List<Product> selectedProductsList = new ArrayList<>();
     ProductsAdapter productsAdapter;
     RecyclerView mRecyclerView;
     TextInputEditText mTextInputEditText;
+    Button mBtnDelete;
+    static ItemsList mCurrentItemList;
 
     public static CreateListFragment getInstance(ItemsList itemsList) {
         if (sCreateListFragment == null) {
             sCreateListFragment = new CreateListFragment();
         }
         if (itemsList !=null) {
+            mCurrentItemList = itemsList;
             Bundle args = new Bundle();
-            args.putString("name", itemsList.list_name);
-            args.putString("products", itemsList.products);
-            args.putInt("id", itemsList.id);
+            args.putString(NAME, itemsList.list_name);
+            args.putString(PRODUCTS, itemsList.products);
+            args.putInt(ID, itemsList.id);
             sCreateListFragment.setArguments(args);
         } else {
             sCreateListFragment.setArguments(null);
@@ -93,21 +98,33 @@ public class CreateListFragment extends Fragment implements ProductsAdapter.onIt
         btnCancel.setOnClickListener(view -> {
                 getFragmentManager().popBackStack();
         });
+
+        mBtnDelete = root.findViewById(R.id.btnDelete);
+        mBtnDelete.setOnClickListener(view -> new RemoveListTask().execute());
+
         getAllProducts();
         return root;
     }
 
+
+    /**
+     * Updating value of inputedittext view does not work in onCreateView.
+     * Hence it is required to be implemented in onResume() view.
+     */
     @Override
     public void onResume() {
         super.onResume();
         Bundle args = getArguments();
         if (args != null) {
-            mTextInputEditText.setText(args.getString("name"));
-            String products = args.getString("products");
+            // = args.getInt(ID);
+            mTextInputEditText.setText(args.getString(NAME));
+            String products = args.getString(PRODUCTS);
             products = products.substring(1, products.length()-1);
             Log.v("TAG", "Products - " + products);
             String[] arrProducts = products.split(",");
             new GetProductByIdAsync().execute(arrProducts);
+            //Since this is an existing list, give option to delete it
+            mBtnDelete.setVisibility(View.VISIBLE);
         }
     }
 
@@ -149,6 +166,13 @@ public class CreateListFragment extends Fragment implements ProductsAdapter.onIt
         }
     }
 
+    /**
+     *
+     * Here we get a warning to make this asynctask static or a top-level class or else
+     * it may cause a memory leak. This is true if the async task is performing a
+     * long-running task. However, since in our case it is a local query and is done
+     * soon, so it should not be a problem to keep it as a non-static inner class.
+     */
     private class GetProductsAsync extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -181,7 +205,13 @@ public class CreateListFragment extends Fragment implements ProductsAdapter.onIt
         new AddlistAsync().execute(newItemList);
     }
 
-
+    /**
+     *
+     * Here we get a warning to make this asynctask static or a top-level class or else
+     * it may cause a memory leak. This is true if the async task is performing a
+     * long-running task. However, since in our case it is a local query and is done
+     * soon, so it should not be a problem to keep it as a non-static inner class.
+     */
     private class AddlistAsync extends AsyncTask<ItemsList, Void, Void> {
 
         @Override
@@ -200,4 +230,23 @@ public class CreateListFragment extends Fragment implements ProductsAdapter.onIt
         }
     }
 
+    private class RemoveListTask extends AsyncTask<Void, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return SingletonGroceryDBInstance.getInstance(getActivity()).listDao()
+                    .removeGroceryList(mCurrentItemList);
+        }
+
+        @Override
+        protected void onPostExecute(Integer l) {
+            if (l>-1) {
+                Toast.makeText(getActivity(), "Deleted successfully", Toast.LENGTH_SHORT)
+                        .show();
+                //Close fragment
+                getFragmentManager().popBackStack();
+            }
+            super.onPostExecute(l);
+        }
+    }
 }

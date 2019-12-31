@@ -2,7 +2,6 @@ package com.saket.grocerylist;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,15 @@ import com.saket.grocerylist.data.SingletonGroceryDBInstance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by sshriwas on 2019-11-02
  */
 public class HomeListFragment  extends Fragment implements ItemsListAdapter.OnItemSelectedListener{
 
-    List<ItemsList> lstItems = new ArrayList<>();
-    ItemsListAdapter mItemsListAdapter;
+    private List<ItemsList> lstItems = new ArrayList<>();
+    private ItemsListAdapter mItemsListAdapter;
 
     static HomeListFragment createInstance() {
         return new HomeListFragment();
@@ -43,16 +43,15 @@ public class HomeListFragment  extends Fragment implements ItemsListAdapter.OnIt
         RecyclerView recyclerView = root.findViewById(R.id.lstGroceries);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mItemsListAdapter = new ItemsListAdapter(lstItems, HomeListFragment.this);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+                Objects.requireNonNull(getActivity()), DividerItemDecoration.VERTICAL);
         dividerItemDecoration.setDrawable(getActivity().getDrawable(R.drawable.item_decoration));
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         recyclerView.setAdapter(mItemsListAdapter);
 
         Button btnGetList = root.findViewById(R.id.btnGetList);
-        btnGetList.setOnClickListener(view -> {
-            getAllLists();
-        });
+        btnGetList.setOnClickListener(view -> getAllLists());
 
         Button btnCreateProduct = root.findViewById(R.id.btnCreateProduct);
         btnCreateProduct.setOnClickListener(view -> {

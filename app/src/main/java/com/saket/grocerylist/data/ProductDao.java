@@ -8,6 +8,12 @@ import java.util.List;
 
 /**
  * Created by sshriwas on 2019-11-02
+ * Dao class provides access to the DB using entities.
+ *It has convenience methods. These methods can have following annots -
+ * @Query - fetch data
+ * @Insert - Insert data
+ * @Update
+ * @Delete
  */
 @Dao
 public interface ProductDao {
